@@ -38,6 +38,9 @@
     },
     {
       "path": "./apps/files"
+    },
+    {
+      "path": "./shared-types"
     }
   ]
 }
