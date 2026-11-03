@@ -3,13 +3,8 @@
   "compileOnSave": false,
   "files": [],
   "references": [
-
     {
       "path": "./apps/users"
-    },
-
-    {
-      "path": "./apps/api-gateway"
     },
     {
       "path": "./apps/api-gateway"
@@ -17,7 +12,6 @@
     {
       "path": "./apps/blog"
     },
-  
     {
       "path": "./apps/notify"
     },
