@@ -1,0 +1,1 @@
+export const COMMENTS_DEFAULT_LIMIT = 50;

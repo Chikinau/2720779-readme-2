@@ -3,14 +3,30 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true, // приводит строки к нужным типам
+      whitelist: true, // вырезает поля, не описанные в DTO
+      forbidNonWhitelisted: true, // 400, если прислали лишние поля
+    }),
+  );
+  const config = new DocumentBuilder()
+    .setTitle('Readme — Users API')
+    .setDescription('REST API для регистрации, авторизации и получения информации о пользователях')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
