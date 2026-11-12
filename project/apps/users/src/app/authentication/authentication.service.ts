@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { randomUUID } from 'node:crypto';
 import { User, UserRole } from '@project/shared-types';
 import { UserEntity } from '../user/user.entity';
 import { UserRepository } from '../user/user.repository';
@@ -26,19 +25,18 @@ export class AuthenticationService {
     }
 
     const user = new UserEntity({
-      id: randomUUID(),
+      id: '',
       email: dto.email,
       name: dto.name,
-      role: UserRole.User,        // роль проставляем автоматически
+      role: UserRole.User,
       avatar: dto.avatar,
       createdAt: new Date(),
-      passwordHash: '',           // временно, ниже заменится через setPassword
+      passwordHash: '',
     });
 
     await user.setPassword(dto.password);
-    await this.userRepository.save(user);
-
-    return this.toPublic(user);
+    const savedUser = await this.userRepository.save(user);
+    return this.toPublic(savedUser);
   }
 
   // Вход
