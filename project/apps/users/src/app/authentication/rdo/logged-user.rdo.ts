@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UserRdo } from './user.rdo';
 
 export class LoggedUserRdo extends UserRdo {
-  @ApiProperty({
-    description: 'JWT токен доступа (Bearer)',
-    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-  })
+  @ApiProperty({ description: 'Access token (JWT)', example: 'eyJ...' })
   public accessToken!: string;
+
+  @ApiProperty({ description: 'Refresh token (JWT)', example: 'eyJ...' })
+  public refreshToken!: string;
 }

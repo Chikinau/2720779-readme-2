@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { LikeService } from './like.service';
 import { LikeDto } from './dto/like.dto';
@@ -10,13 +10,19 @@ export class LikeController {
 
   @Post(':postId/like')
   @ApiOkResponse({ description: 'Лайк поставлен' })
-  public async like(@Param('postId') postId: string, @Body() dto: LikeDto) {
+  public async like(
+    @Param('postId', ParseUUIDPipe) postId: string,
+    @Body() dto: LikeDto,
+  ) {
     return this.likeService.like(dto.userId, postId);
   }
 
   @Delete(':postId/like')
   @ApiOkResponse({ description: 'Лайк снят' })
-  public async unlike(@Param('postId') postId: string, @Body() dto: LikeDto) {
+  public async unlike(
+    @Param('postId', ParseUUIDPipe) postId: string,
+    @Body() dto: LikeDto,
+  ) {
     await this.likeService.unlike(dto.userId, postId);
     return { success: true };
   }

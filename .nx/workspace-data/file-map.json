@@ -20,7 +20,7 @@
       },
       {
         "file": ".gitignore",
-        "hash": "14760868251076070154"
+        "hash": "15464144917323476263"
       },
       {
         "file": "Contributing.md",
@@ -460,7 +460,7 @@
       },
       {
         "file": "project/.gitignore",
-        "hash": "15885801554143966899"
+        "hash": "12258158662025565808"
       },
       {
         "file": "project/.prettierignore",
@@ -527,8 +527,20 @@
         "hash": "1138914127741561495"
       },
       {
+        "file": "project/apps/blog/.env.example",
+        "hash": "3741405276517989477"
+      },
+      {
         "file": "project/apps/blog/.spec.swcrc",
         "hash": "18201067170784284381"
+      },
+      {
+        "file": "project/apps/blog/blog.http",
+        "hash": "4718096568034325285"
+      },
+      {
+        "file": "project/apps/blog/docker-compose.yml",
+        "hash": "3586082597680624631"
       },
       {
         "file": "project/apps/blog/eslint.config.mjs",
@@ -540,7 +552,23 @@
       },
       {
         "file": "project/apps/blog/package.json",
-        "hash": "9462626847206326387"
+        "hash": "14624555298146475133"
+      },
+      {
+        "file": "project/apps/blog/prisma/migrations/20261113085213_init/migration.sql",
+        "hash": "16125417968540229856"
+      },
+      {
+        "file": "project/apps/blog/prisma/migrations/migration_lock.toml",
+        "hash": "872437952673290735"
+      },
+      {
+        "file": "project/apps/blog/prisma/schema.prisma",
+        "hash": "1613979616507707146"
+      },
+      {
+        "file": "project/apps/blog/prisma/seed.ts",
+        "hash": "5210048112903948543"
       },
       {
         "file": "project/apps/blog/src/app/app.controller.ts",
@@ -548,7 +576,7 @@
       },
       {
         "file": "project/apps/blog/src/app/app.module.ts",
-        "hash": "14491002391676992390"
+        "hash": "1674925593884871884"
       },
       {
         "file": "project/apps/blog/src/app/app.service.ts",
@@ -560,7 +588,7 @@
       },
       {
         "file": "project/apps/blog/src/app/comment/comment.controller.ts",
-        "hash": "15686876469819064266"
+        "hash": "14671278319032847393"
       },
       {
         "file": "project/apps/blog/src/app/comment/comment.entity.ts",
@@ -568,19 +596,23 @@
       },
       {
         "file": "project/apps/blog/src/app/comment/comment.module.ts",
-        "hash": "2362551769503623948"
+        "hash": "11438336710109879793"
       },
       {
         "file": "project/apps/blog/src/app/comment/comment.repository.ts",
-        "hash": "9434696856060576212"
+        "hash": "12826176080202320676"
       },
       {
         "file": "project/apps/blog/src/app/comment/comment.service.ts",
-        "hash": "4229671768073042473"
+        "hash": "5300288704783508805"
       },
       {
         "file": "project/apps/blog/src/app/comment/dto/create-comment.dto.ts",
         "hash": "9461938622393012755"
+      },
+      {
+        "file": "project/apps/blog/src/app/comment/dto/get-comments-query.dto.ts",
+        "hash": "13538334325185450918"
       },
       {
         "file": "project/apps/blog/src/app/comment/rdo/comment.rdo.ts",
@@ -592,27 +624,35 @@
       },
       {
         "file": "project/apps/blog/src/app/like/like.controller.ts",
-        "hash": "8469687014445457164"
+        "hash": "2388353299055124778"
       },
       {
         "file": "project/apps/blog/src/app/like/like.entity.ts",
-        "hash": "1630223553861943957"
+        "hash": "13747399915944406013"
       },
       {
         "file": "project/apps/blog/src/app/like/like.module.ts",
-        "hash": "7285935598654306777"
+        "hash": "7461017798928003710"
       },
       {
         "file": "project/apps/blog/src/app/like/like.repository.ts",
-        "hash": "8329862552911021037"
+        "hash": "14843851251145661371"
       },
       {
         "file": "project/apps/blog/src/app/like/like.service.ts",
-        "hash": "13256337177397473421"
+        "hash": "9523644413123256504"
       },
       {
         "file": "project/apps/blog/src/app/post/dto/create-post.dto.ts",
         "hash": "9443052542381750262"
+      },
+      {
+        "file": "project/apps/blog/src/app/post/dto/get-drafts-query.ts",
+        "hash": "4312363443895733003"
+      },
+      {
+        "file": "project/apps/blog/src/app/post/dto/get-posts-query.dto.ts",
+        "hash": "5359576018209134488"
       },
       {
         "file": "project/apps/blog/src/app/post/dto/update-post.dto.ts",
@@ -624,7 +664,7 @@
       },
       {
         "file": "project/apps/blog/src/app/post/post.controller.ts",
-        "hash": "1417878218804230963"
+        "hash": "5534251218688597988"
       },
       {
         "file": "project/apps/blog/src/app/post/post.entity.ts",
@@ -632,23 +672,35 @@
       },
       {
         "file": "project/apps/blog/src/app/post/post.module.ts",
-        "hash": "2779025492046798616"
+        "hash": "15389746848802903620"
       },
       {
         "file": "project/apps/blog/src/app/post/post.repository.ts",
-        "hash": "10003849096654569707"
+        "hash": "17479066870432083787"
       },
       {
         "file": "project/apps/blog/src/app/post/post.service.ts",
-        "hash": "6483913045410868697"
+        "hash": "13536396963795781206"
       },
       {
         "file": "project/apps/blog/src/app/post/rdo/post.rdo.ts",
         "hash": "17975302103794177960"
       },
       {
+        "file": "project/apps/blog/src/app/prisma/prisma.module.ts",
+        "hash": "4566101020179189216"
+      },
+      {
+        "file": "project/apps/blog/src/app/prisma/prisma.service.ts",
+        "hash": "12409190887622059251"
+      },
+      {
+        "file": "project/apps/blog/src/app/search/dto/search-query.dto.ts",
+        "hash": "12339924817448189356"
+      },
+      {
         "file": "project/apps/blog/src/app/search/search.controller.ts",
-        "hash": "7294846559396335261"
+        "hash": "6952811418489014586"
       },
       {
         "file": "project/apps/blog/src/app/search/search.module.ts",
@@ -664,7 +716,7 @@
       },
       {
         "file": "project/apps/blog/src/main.ts",
-        "hash": "7472586475897281324"
+        "hash": "711056231702751162"
       },
       {
         "file": "project/apps/blog/tsconfig.app.json",
@@ -704,11 +756,43 @@
       },
       {
         "file": "project/apps/files/src/app/app.module.ts",
-        "hash": "11673476679848632172"
+        "hash": "5791051579571341210"
       },
       {
         "file": "project/apps/files/src/app/app.service.ts",
         "hash": "9967902337593410053"
+      },
+      {
+        "file": "project/apps/files/src/app/file/dto/upload-file.dto.ts",
+        "hash": "12952162905545986535"
+      },
+      {
+        "file": "project/apps/files/src/app/file/file.consts.ts",
+        "hash": "3834924921349077494"
+      },
+      {
+        "file": "project/apps/files/src/app/file/file.controller.ts",
+        "hash": "7613375795144075075"
+      },
+      {
+        "file": "project/apps/files/src/app/file/file.entity.ts",
+        "hash": "6575742017519285914"
+      },
+      {
+        "file": "project/apps/files/src/app/file/file.module.ts",
+        "hash": "3802585171296915431"
+      },
+      {
+        "file": "project/apps/files/src/app/file/file.repository.ts",
+        "hash": "13142794700419031414"
+      },
+      {
+        "file": "project/apps/files/src/app/file/file.service.ts",
+        "hash": "18091545822220180735"
+      },
+      {
+        "file": "project/apps/files/src/app/file/rdo/file.rdo.ts",
+        "hash": "12225306986649749819"
       },
       {
         "file": "project/apps/files/src/assets/.gitkeep",
@@ -716,11 +800,11 @@
       },
       {
         "file": "project/apps/files/src/main.ts",
-        "hash": "14244403322143362372"
+        "hash": "888385174123113574"
       },
       {
         "file": "project/apps/files/tsconfig.app.json",
-        "hash": "7879550945202788462"
+        "hash": "8497864256696557792"
       },
       {
         "file": "project/apps/files/tsconfig.json",
@@ -787,8 +871,16 @@
         "hash": "1138914127741561495"
       },
       {
+        "file": "project/apps/users/.env.example",
+        "hash": "1601381147223777613"
+      },
+      {
         "file": "project/apps/users/.spec.swcrc",
         "hash": "18201067170784284381"
+      },
+      {
+        "file": "project/apps/users/docker-compose.yml",
+        "hash": "705504257871653079"
       },
       {
         "file": "project/apps/users/eslint.config.mjs",
@@ -803,12 +895,16 @@
         "hash": "3651280237636424285"
       },
       {
+        "file": "project/apps/users/src/app/app.config.ts",
+        "hash": "17924559747293465157"
+      },
+      {
         "file": "project/apps/users/src/app/app.controller.ts",
         "hash": "15276891910009544695"
       },
       {
         "file": "project/apps/users/src/app/app.module.ts",
-        "hash": "16235428438978264872"
+        "hash": "1250327673048342343"
       },
       {
         "file": "project/apps/users/src/app/app.service.ts",
@@ -820,7 +916,7 @@
       },
       {
         "file": "project/apps/users/src/app/authentication/authentication.controller.ts",
-        "hash": "3209450028261055214"
+        "hash": "14279884187041709034"
       },
       {
         "file": "project/apps/users/src/app/authentication/authentication.module.ts",
@@ -828,7 +924,7 @@
       },
       {
         "file": "project/apps/users/src/app/authentication/authentication.service.ts",
-        "hash": "8810426112928497443"
+        "hash": "9406595868880149737"
       },
       {
         "file": "project/apps/users/src/app/authentication/dto/create-user.dto.ts",
@@ -839,12 +935,16 @@
         "hash": "12938495981236213270"
       },
       {
+        "file": "project/apps/users/src/app/authentication/parse-mongo-id.pipe.ts",
+        "hash": "8473919772423854386"
+      },
+      {
         "file": "project/apps/users/src/app/authentication/rdo/logged-user.rdo.ts",
-        "hash": "6512879478913088811"
+        "hash": "277260020198509125"
       },
       {
         "file": "project/apps/users/src/app/authentication/rdo/user.rdo.ts",
-        "hash": "1561737609933612289"
+        "hash": "9875914120956135713"
       },
       {
         "file": "project/apps/users/src/app/user/user.consts.ts",
@@ -855,12 +955,16 @@
         "hash": "6719123438575958296"
       },
       {
+        "file": "project/apps/users/src/app/user/user.model.ts",
+        "hash": "7229811252288368892"
+      },
+      {
         "file": "project/apps/users/src/app/user/user.module.ts",
-        "hash": "3950959636494756338"
+        "hash": "7066594490092035529"
       },
       {
         "file": "project/apps/users/src/app/user/user.repository.ts",
-        "hash": "1769145680576187537"
+        "hash": "4704716109193989700"
       },
       {
         "file": "project/apps/users/src/assets/.gitkeep",
@@ -904,11 +1008,15 @@
       },
       {
         "file": "project/package-lock.json",
-        "hash": "4839301919432423886"
+        "hash": "16095564286487041537"
       },
       {
         "file": "project/package.json",
-        "hash": "5708312344915626190"
+        "hash": "7752852560257446846"
+      },
+      {
+        "file": "project/prisma.config.ts",
+        "hash": "14077341341369286462"
       },
       {
         "file": "project/shared-types/.spec.swcrc",
@@ -972,7 +1080,7 @@
       },
       {
         "file": "project/shared-types/src/index.ts",
-        "hash": "12980433732736489196"
+        "hash": "9362578334781362311"
       },
       {
         "file": "project/shared-types/src/lib/comment.interface.ts",
@@ -981,6 +1089,10 @@
       {
         "file": "project/shared-types/src/lib/common.interface.ts",
         "hash": "7742032747256813146"
+      },
+      {
+        "file": "project/shared-types/src/lib/file.interface.ts",
+        "hash": "11306929017980259925"
       },
       {
         "file": "project/shared-types/src/lib/like.interface.ts",

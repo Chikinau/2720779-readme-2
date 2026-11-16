@@ -5,20 +5,29 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User, UserRole } from '@project/shared-types';
+import { randomUUID } from 'node:crypto';
+import { TokenPair, User, UserRole } from '@project/shared-types';
 import { UserEntity } from '../user/user.entity';
 import { UserRepository } from '../user/user.repository';
+import { RefreshTokenRepository } from '../refresh-token/refresh-token.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import {
+  JWT_ACCESS_EXPIRES,
+  JWT_ACCESS_SECRET_KEY,
+  JWT_REFRESH_EXPIRES,
+  JWT_REFRESH_SECRET_KEY,
+  REFRESH_TOKEN_EXPIRES_MS,
+} from './authentication.consts';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly refreshTokenRepository: RefreshTokenRepository,
     private readonly jwtService: JwtService,
   ) {}
 
-  // Регистрация
   public async register(dto: CreateUserDto): Promise<User> {
     if (await this.userRepository.exists(dto.email)) {
       throw new ConflictException('Пользователь с таким email уже существует');
@@ -39,7 +48,6 @@ export class AuthenticationService {
     return this.toPublic(savedUser);
   }
 
-  // Вход
   public async login(dto: LoginUserDto) {
     const user = await this.userRepository.findByEmail(dto.email);
     if (!user) {
@@ -51,16 +59,46 @@ export class AuthenticationService {
       throw new UnauthorizedException('Неверный пароль');
     }
 
-    const accessToken = await this.jwtService.signAsync({
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-    });
-
-    return { ...this.toPublic(user), accessToken };
+    const tokens = await this.issueTokens(user);
+    return { ...this.toPublic(user), ...tokens };
   }
 
-  // Детальная информация
+  public async refresh(refreshToken: string): Promise<TokenPair> {
+    let payload: { sub: string; jti: string };
+    try {
+      payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env[JWT_REFRESH_SECRET_KEY],
+      });
+    } catch {
+      throw new UnauthorizedException('Невалидный refresh token');
+    }
+
+    const stored = await this.refreshTokenRepository.findByTokenId(payload.jti);
+    if (!stored) {
+      throw new UnauthorizedException('Refresh token отозван или не найден');
+    }
+
+    const user = await this.userRepository.findById(payload.sub);
+    if (!user) {
+      throw new UnauthorizedException('Пользователь не найден');
+    }
+
+    await this.refreshTokenRepository.deleteByTokenId(payload.jti);
+    return this.issueTokens(user);
+  }
+
+  public async logout(refreshToken: string): Promise<void> {
+    let payload: { jti: string };
+    try {
+      payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env[JWT_REFRESH_SECRET_KEY],
+      });
+    } catch {
+      return;
+    }
+    await this.refreshTokenRepository.deleteByTokenId(payload.jti);
+  }
+
   public async getUser(id: string): Promise<User> {
     const user = await this.userRepository.findById(id);
     if (!user) {
@@ -69,7 +107,30 @@ export class AuthenticationService {
     return this.toPublic(user);
   }
 
-  // Вырезаем passwordHash — клиент его не должен видеть
+  private async issueTokens(user: UserEntity): Promise<TokenPair> {
+    const tokenId = randomUUID();
+    const accessToken = await this.jwtService.signAsync(
+      { sub: user.id, email: user.email, role: user.role },
+      {
+        secret: process.env[JWT_ACCESS_SECRET_KEY],
+        expiresIn: JWT_ACCESS_EXPIRES,
+      },
+    );
+    const refreshToken = await this.jwtService.signAsync(
+      { sub: user.id, jti: tokenId },
+      {
+        secret: process.env[JWT_REFRESH_SECRET_KEY],
+        expiresIn: JWT_REFRESH_EXPIRES,
+      },
+    );
+    await this.refreshTokenRepository.create({
+      tokenId,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRES_MS),
+    });
+    return { accessToken, refreshToken };
+  }
+
   private toPublic(entity: UserEntity): User {
     const { passwordHash, ...rest } = entity.toPOJO();
     return rest;
