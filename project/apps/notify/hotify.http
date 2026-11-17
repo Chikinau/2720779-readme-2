@@ -1,0 +1,9 @@
+@baseUrl = http://localhost:3003/api
+
+### Запустить рассылку (публикует событие в RabbitMQ)
+POST {{baseUrl}}/notify/trigger
+Content-Type: application/json
+
+{
+  "email": "test@example.com"
+}

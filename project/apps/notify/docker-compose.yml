@@ -1,0 +1,48 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: readme-notify-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  fake-smtp-server:
+    image: gessnerfl/fake-smtp-server
+    container_name: readme-notify-smtp
+    restart: unless-stopped
+    hostname: fake-smtp-server
+    ports:
+      - "8025:8025"
+      - "1083:8080"
+
+  mongodb:
+    image: mongo:7
+    container_name: readme-notify-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    ports:
+      - "27020:27017"
+    volumes:
+      - readme-notify-mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+
+volumes:
+  readme-notify-mongo-data:
