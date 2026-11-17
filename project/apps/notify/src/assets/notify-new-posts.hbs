@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <title>Новые публикации в Readme</title>
+  </head>
+  <body>
+    <h1>Привет, {{user}}!</h1>
+    <p>С момента последней рассылки в Readme появились новые публикации:</p>
+    <ul>
+      {{#each posts}}
+        <li><strong>{{this.title}}</strong> — {{this.authorId}}</li>
+      {{/each}}
+    </ul>
+    <p>Если новых публикаций нет, значит, вы уже всё прочитали.</p>
+  </body>
+</html>
