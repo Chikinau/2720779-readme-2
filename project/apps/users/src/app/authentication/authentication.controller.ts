@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
-  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -11,8 +10,11 @@ import {
 import { AuthenticationService } from './authentication.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { LoggedUserRdo } from './rdo/logged-user.rdo';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UserRdo } from './rdo/user.rdo';
+import { ParseMongoIdPipe } from './parse-mongo-id.pipe';
+import { TokensRdo } from './rdo/tokens.rdo';
+import { LoggedUserRdo } from './rdo/logged-user.rdo';
 
 @ApiTags('authentication')
 @Controller('auth')
@@ -22,34 +24,45 @@ export class AuthenticationController {
   @Post('register')
   @ApiOperation({ summary: 'Регистрация нового пользователя' })
   @ApiCreatedResponse({
-    description: 'Пользователь успешно зарегистрирован (данные сохранены в MongoDB)',
+    description: 'Пользователь зарегистрирован',
     type: UserRdo,
   })
-  @ApiConflictResponse({ description: 'Пользователь с таким email уже существует' })
   public async register(@Body() dto: CreateUserDto) {
     return this.authService.register(dto);
   }
 
   @Post('login')
-  @ApiOperation({ summary: 'Вход в приложение, возвращает JWT' })
-  @ApiOkResponse({
-    description: 'Успешный вход, возвращается профиль и JWT',
-    type: LoggedUserRdo,
-  })
+  @ApiOperation({ summary: 'Вход, возвращает пару access + refresh токенов' })
+  @ApiOkResponse({ description: 'Успешный вход', type: LoggedUserRdo })
   @ApiUnauthorizedResponse({ description: 'Неверный пароль' })
   @ApiNotFoundResponse({ description: 'Пользователь не найден' })
   public async login(@Body() dto: LoginUserDto) {
     return this.authService.login(dto);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Детальная информация о пользователе (без конфиденциальных данных)' })
-  @ApiOkResponse({
-    description: 'Профиль пользователя (без passwordHash)',
-    type: UserRdo,
+  @Post('refresh')
+  @ApiOperation({ summary: 'Обновление пары токенов по refresh token' })
+  @ApiOkResponse({ description: 'Новая пара токенов', type: TokensRdo })
+  @ApiUnauthorizedResponse({
+    description: 'Невалидный или отозванный refresh token',
   })
+  public async refresh(@Body() dto: RefreshTokenDto) {
+    return this.authService.refresh(dto.refreshToken);
+  }
+
+  @Post('logout')
+  @ApiOperation({ summary: 'Отзыв refresh token' })
+  @ApiOkResponse({ description: 'Токен отозван' })
+  public async logout(@Body() dto: RefreshTokenDto) {
+    await this.authService.logout(dto.refreshToken);
+    return { success: true };
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Детальная информация о пользователе' })
+  @ApiOkResponse({ description: 'Профиль пользователя', type: UserRdo })
   @ApiNotFoundResponse({ description: 'Пользователь не найден' })
-  public async getUser(@Param('id') id: string) {
+  public async getUser(@Param('id', ParseMongoIdPipe) id: string) {
     return this.authService.getUser(id);
   }
 }

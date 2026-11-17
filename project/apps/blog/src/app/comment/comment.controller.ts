@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
   Query,
 } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentRdo } from './rdo/comment.rdo';
+import { GetCommentsQueryDto } from './dto/get-comments-query.dto';
 
 @ApiTags('comments')
 @Controller()
@@ -20,7 +22,7 @@ export class CommentController {
   @Post('posts/:postId/comments')
   @ApiOkResponse({ description: 'Комментарий создан', type: CommentRdo })
   public async create(
-    @Param('postId') postId: string,
+    @Param('postId', ParseUUIDPipe) postId: string,
     @Body() dto: CreateCommentDto,
   ) {
     return this.commentService.create(postId, dto.userId, dto);
@@ -29,20 +31,18 @@ export class CommentController {
   @Get('posts/:postId/comments')
   @ApiOkResponse({ description: 'Список комментариев', type: [CommentRdo] })
   public async findByPost(
-    @Param('postId') postId: string,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
+    @Param('postId', ParseUUIDPipe) postId: string,
+    @Query() query: GetCommentsQueryDto,
   ) {
-    return this.commentService.findByPost(
-      postId,
-      page ? Number(page) : undefined,
-      limit ? Number(limit) : undefined,
-    );
+    return this.commentService.findByPost(postId, query.page, query.limit);
   }
 
   @Delete('comments/:id')
   @ApiOkResponse({ description: 'Комментарий удалён' })
-  public async delete(@Param('id') id: string, @Body('userId') userId: string) {
+  public async delete(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body('userId') userId: string,
+  ) {
     await this.commentService.delete(id, userId);
   }
 }

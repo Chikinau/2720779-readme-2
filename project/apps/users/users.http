@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:3000/api
+
+### Регистрация
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "http-user@test.com",
+  "name": "HTTP User",
+  "password": "123456"
+}
+
+### Вход
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "http-user@test.com",
+  "password": "123456"
+}
+
+### Детальная информация
+GET {{baseUrl}}/auth/{{login.response.body.$.id}}
+
+### Обновление пары токенов
+# @name refresh
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{login.response.body.$.refreshToken}}"
+}
+
+### Отзыв refresh-токена
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refresh.response.body.$.refreshToken}}"
+}
+
+### Повторный refresh после logout (должен вернуть 401)
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refresh.response.body.$.refreshToken}}"
+}

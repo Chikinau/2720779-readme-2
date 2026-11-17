@@ -1,8 +1,6 @@
 import {
   BadRequestException,
   ConflictException,
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,16 +10,17 @@ import { PostEntity } from './post.entity';
 import { PostRepository } from './post.repository';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { TAGS_MAX_COUNT } from './post.consts';
+import { POSTS_DEFAULT_LIMIT, TAGS_MAX_COUNT } from './post.consts';
 import { LikeRepository } from '../like/like.repository';
 import { CommentRepository } from '../comment/comment.repository';
+import { GetPostsQueryDto, PostSortField } from './dto/get-posts-query.dto';
 
 @Injectable()
 export class PostService {
   constructor(
-   private readonly postRepository: PostRepository,
-  private readonly likeRepository: LikeRepository,
-  private readonly commentRepository: CommentRepository,
+    private readonly postRepository: PostRepository,
+    private readonly likeRepository: LikeRepository,
+    private readonly commentRepository: CommentRepository,
   ) {}
 
   public async create(dto: CreatePostDto): Promise<Post> {
@@ -62,14 +61,7 @@ export class PostService {
     return post.toPOJO();
   }
 
-  public async findMany(query: {
-    authorId?: string;
-    type?: string;
-    tag?: string;
-    sort?: string;
-    page?: number;
-    limit?: number;
-  }) {
+  public async findMany(query: GetPostsQueryDto) {
     const all = await this.postRepository.findByFilter({
       authorId: query.authorId,
       type: query.type,
@@ -77,10 +69,10 @@ export class PostService {
       status: PostStatus.Published,
     });
 
-    const sort = query.sort ?? 'dateDesc';
+    const sort = query.sort ?? PostSortField.DateDesc;
     let sorted: PostEntity[];
 
-    if (sort === 'likesDesc') {
+    if (sort === PostSortField.LikesDesc) {
       const enriched = await Promise.all(
         all.map(async (p) => ({
           entity: p,
@@ -113,14 +105,15 @@ export class PostService {
     }
     const total = sorted.length;
     const page = query.page ?? 1;
-    const limit = query.limit ?? 25;
+    const limit = query.limit ?? POSTS_DEFAULT_LIMIT;
     const start = (page - 1) * limit;
     const items = sorted.slice(start, start + limit).map((e) => e.toPOJO());
+
     return { items, total };
   }
 
   public async findDraftsByAuthor(authorId: string) {
-   const items = await this.postRepository.findByFilter({
+    const items = await this.postRepository.findByFilter({
       authorId,
       status: PostStatus.Draft,
     });

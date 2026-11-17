@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { getAppConfig } from './app.config';
+import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { getAppConfig } from './app.config';
     }),
     UserModule,
     AuthenticationModule,
+    RefreshTokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],
