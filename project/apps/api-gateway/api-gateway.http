@@ -1,0 +1,87 @@
+@baseUrl = http://localhost:3004/api
+
+### Регистрация
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "gateway-http@test.com",
+  "name": "Gateway HTTP",
+  "password": "123456"
+}
+
+### Логин
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "gateway-http@test.com",
+  "password": "123456"
+}
+
+### Профиль текущего пользователя
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{login.response.body.$.accessToken}}
+
+### Список постов (с агрегацией авторов)
+GET {{baseUrl}}/posts
+
+### Список постов с сортировкой по лайкам
+GET {{baseUrl}}/posts?sort=likesDesc&page=1&limit=10
+
+### Создать пост (автор из токена)
+# @name createPost
+POST {{baseUrl}}/posts
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.$.accessToken}}
+
+{
+  "type": "text",
+  "title": "Пост через шлюз из HTTP-файла",
+  "announcement": "Анонс через шлюз достаточно длинный для прохождения валидации по порогу",
+  "text": "Текст через шлюз достаточно длинный для прохождения валидации по минимальному порогу в сто символов ровно",
+  "tags": ["nestjs", "gateway"]
+}
+
+### Детальная информация о посте
+GET {{baseUrl}}/posts/{{createPost.response.body.$.id}}
+
+### Черновики текущего автора
+GET {{baseUrl}}/posts/drafts
+Authorization: Bearer {{login.response.body.$.accessToken}}
+
+### Поиск по названию
+GET {{baseUrl}}/posts/search?title=шлюз
+
+### Создать комментарий
+# @name createComment
+POST {{baseUrl}}/posts/{{createPost.response.body.$.id}}/comments
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.$.accessToken}}
+
+{
+  "text": "Комментарий через шлюз из HTTP-файла, достаточно длинный"
+}
+
+### Список комментариев
+GET {{baseUrl}}/posts/{{createPost.response.body.$.id}}/comments
+
+### Поставить лайк
+POST {{baseUrl}}/posts/{{createPost.response.body.$.id}}/like
+Authorization: Bearer {{login.response.body.$.accessToken}}
+
+### Снять лайк
+DELETE {{baseUrl}}/posts/{{createPost.response.body.$.id}}/like
+Authorization: Bearer {{login.response.body.$.accessToken}}
+
+### Загрузить файл
+POST {{baseUrl}}/files
+Content-Type: multipart/form-data; boundary=Boundary
+
+--Boundary
+Content-Disposition: form-data; name="file"; filename="specification.png"
+Content-Type: image/png
+
+< ./specification.png
+--Boundary--
