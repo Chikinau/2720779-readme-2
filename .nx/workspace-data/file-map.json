@@ -475,6 +475,10 @@
         "hash": "2207906510699530"
       },
       {
+        "file": "project/apps/api-gateway/.env.example",
+        "hash": "5383512180805517191"
+      },
+      {
         "file": "project/apps/api-gateway/.spec.swcrc",
         "hash": "18201067170784284381"
       },
@@ -491,16 +495,76 @@
         "hash": "18420622740326683645"
       },
       {
+        "file": "project/apps/api-gateway/src/app/app.config.ts",
+        "hash": "133070267288004140"
+      },
+      {
         "file": "project/apps/api-gateway/src/app/app.controller.ts",
         "hash": "15276891910009544695"
       },
       {
         "file": "project/apps/api-gateway/src/app/app.module.ts",
-        "hash": "11673476679848632172"
+        "hash": "11951328016025443853"
       },
       {
         "file": "project/apps/api-gateway/src/app/app.service.ts",
         "hash": "9967902337593410053"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/auth/auth.controller.ts",
+        "hash": "17224696336368147071"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/auth/auth.module.ts",
+        "hash": "17049680836365840667"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/auth/auth.service.ts",
+        "hash": "13181278775800570839"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/auth/current-user.decorator.ts",
+        "hash": "15055185905783625128"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/auth/dto/login.dto.ts",
+        "hash": "12010893008767488252"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/auth/dto/refresh-token.dto.ts",
+        "hash": "6077592861886007226"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/auth/dto/register.dto.ts",
+        "hash": "9972593417598759078"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/auth/jwt-autg.guard.ts",
+        "hash": "18332025947670963589"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/posts/dto/create-post.dto.ts",
+        "hash": "7771132707108355232"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/posts/dto/get-posts-query.dto.ts",
+        "hash": "10174161986969916641"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/posts/posts.controller.ts",
+        "hash": "4171082655138455448"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/posts/posts.module.ts",
+        "hash": "13650692539001688152"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/posts/posts.service.ts",
+        "hash": "11564907638349440071"
+      },
+      {
+        "file": "project/apps/api-gateway/src/app/posts/rdo/post.rdo.ts",
+        "hash": "12247480407947639473"
       },
       {
         "file": "project/apps/api-gateway/src/assets/.gitkeep",
@@ -508,7 +572,7 @@
       },
       {
         "file": "project/apps/api-gateway/src/main.ts",
-        "hash": "14244403322143362372"
+        "hash": "3231431017594235245"
       },
       {
         "file": "project/apps/api-gateway/tsconfig.app.json",
@@ -819,12 +883,24 @@
         "hash": "1138914127741561495"
       },
       {
+        "file": "project/apps/notify/.env.example",
+        "hash": "15826636601607862438"
+      },
+      {
         "file": "project/apps/notify/.spec.swcrc",
         "hash": "18201067170784284381"
       },
       {
+        "file": "project/apps/notify/docker-compose.yml",
+        "hash": "6978797528796038418"
+      },
+      {
         "file": "project/apps/notify/eslint.config.mjs",
         "hash": "2624537849564014525"
+      },
+      {
+        "file": "project/apps/notify/hotify.http",
+        "hash": "3410108122133561534"
       },
       {
         "file": "project/apps/notify/jest.config.cts",
@@ -835,28 +911,68 @@
         "hash": "5217381770581246809"
       },
       {
+        "file": "project/apps/notify/src/app/app.config.ts",
+        "hash": "187178225564764945"
+      },
+      {
         "file": "project/apps/notify/src/app/app.controller.ts",
         "hash": "15276891910009544695"
       },
       {
         "file": "project/apps/notify/src/app/app.module.ts",
-        "hash": "11673476679848632172"
+        "hash": "12951367676568606014"
       },
       {
         "file": "project/apps/notify/src/app/app.service.ts",
         "hash": "9967902337593410053"
       },
       {
+        "file": "project/apps/notify/src/app/notify/dto/trigger-digest.dto.ts",
+        "hash": "9522268520250997"
+      },
+      {
+        "file": "project/apps/notify/src/app/notify/notify-state.model.ts",
+        "hash": "10314729607470720407"
+      },
+      {
+        "file": "project/apps/notify/src/app/notify/notify-state.repository.ts",
+        "hash": "3154371492211672851"
+      },
+      {
+        "file": "project/apps/notify/src/app/notify/notify.consumer.ts",
+        "hash": "14786755216721096106"
+      },
+      {
+        "file": "project/apps/notify/src/app/notify/notify.controller.ts",
+        "hash": "7297564530712330983"
+      },
+      {
+        "file": "project/apps/notify/src/app/notify/notify.module.ts",
+        "hash": "15546182109763449502"
+      },
+      {
+        "file": "project/apps/notify/src/app/notify/notify.service.ts",
+        "hash": "15434982780221834710"
+      },
+      {
+        "file": "project/apps/notify/src/app/rabbit/rabbit.module.ts",
+        "hash": "370551213417428732"
+      },
+      {
         "file": "project/apps/notify/src/assets/.gitkeep",
         "hash": "3244421341483603138"
       },
       {
+        "file": "project/apps/notify/src/assets/notify-new-posts.hbs",
+        "hash": "1437709570551415013"
+      },
+      {
         "file": "project/apps/notify/src/main.ts",
-        "hash": "14244403322143362372"
+        "hash": "1642985064717876743"
       },
       {
         "file": "project/apps/notify/tsconfig.app.json",
-        "hash": "7879550945202788462"
+        "hash": "8497864256696557792"
       },
       {
         "file": "project/apps/notify/tsconfig.json",
@@ -872,7 +988,7 @@
       },
       {
         "file": "project/apps/users/.env.example",
-        "hash": "1601381147223777613"
+        "hash": "12797699350472189205"
       },
       {
         "file": "project/apps/users/.spec.swcrc",
@@ -904,7 +1020,7 @@
       },
       {
         "file": "project/apps/users/src/app/app.module.ts",
-        "hash": "1250327673048342343"
+        "hash": "14710802438257357752"
       },
       {
         "file": "project/apps/users/src/app/app.service.ts",
@@ -912,19 +1028,19 @@
       },
       {
         "file": "project/apps/users/src/app/authentication/authentication.consts.ts",
-        "hash": "1211490743223085153"
+        "hash": "8206134850026933493"
       },
       {
         "file": "project/apps/users/src/app/authentication/authentication.controller.ts",
-        "hash": "14279884187041709034"
+        "hash": "17997052740044527743"
       },
       {
         "file": "project/apps/users/src/app/authentication/authentication.module.ts",
-        "hash": "3846403840170142514"
+        "hash": "5095046808788436016"
       },
       {
         "file": "project/apps/users/src/app/authentication/authentication.service.ts",
-        "hash": "9406595868880149737"
+        "hash": "13815472600141420284"
       },
       {
         "file": "project/apps/users/src/app/authentication/dto/create-user.dto.ts",
@@ -935,16 +1051,36 @@
         "hash": "12938495981236213270"
       },
       {
+        "file": "project/apps/users/src/app/authentication/dto/refresh-token.dto.ts",
+        "hash": "3881463199438451126"
+      },
+      {
         "file": "project/apps/users/src/app/authentication/parse-mongo-id.pipe.ts",
         "hash": "8473919772423854386"
       },
       {
         "file": "project/apps/users/src/app/authentication/rdo/logged-user.rdo.ts",
-        "hash": "277260020198509125"
+        "hash": "1967023244693427140"
+      },
+      {
+        "file": "project/apps/users/src/app/authentication/rdo/tokens.rdo.ts",
+        "hash": "5277944438637912716"
       },
       {
         "file": "project/apps/users/src/app/authentication/rdo/user.rdo.ts",
         "hash": "9875914120956135713"
+      },
+      {
+        "file": "project/apps/users/src/app/refresh-token/refresh-token.model.ts",
+        "hash": "7701407485033399108"
+      },
+      {
+        "file": "project/apps/users/src/app/refresh-token/refresh-token.module.ts",
+        "hash": "17769730371161267110"
+      },
+      {
+        "file": "project/apps/users/src/app/refresh-token/refresh-token.repository.ts",
+        "hash": "1217618132196048373"
       },
       {
         "file": "project/apps/users/src/app/user/user.consts.ts",
@@ -987,6 +1123,10 @@
         "hash": "615003462392562649"
       },
       {
+        "file": "project/apps/users/users.http",
+        "hash": "11186179854589587948"
+      },
+      {
         "file": "project/apps/users/webpack.config.js",
         "hash": "1138914127741561495"
       },
@@ -1008,11 +1148,11 @@
       },
       {
         "file": "project/package-lock.json",
-        "hash": "16095564286487041537"
+        "hash": "16689836735557608936"
       },
       {
         "file": "project/package.json",
-        "hash": "7752852560257446846"
+        "hash": "12925164300980163354"
       },
       {
         "file": "project/prisma.config.ts",
@@ -1080,7 +1220,7 @@
       },
       {
         "file": "project/shared-types/src/index.ts",
-        "hash": "9362578334781362311"
+        "hash": "15782934313704987094"
       },
       {
         "file": "project/shared-types/src/lib/comment.interface.ts",
@@ -1103,8 +1243,16 @@
         "hash": "444069292058710587"
       },
       {
+        "file": "project/shared-types/src/lib/rabbit-routing.interface.ts",
+        "hash": "455769816897865440"
+      },
+      {
         "file": "project/shared-types/src/lib/subscription.interface.ts",
         "hash": "18165479742353492686"
+      },
+      {
+        "file": "project/shared-types/src/lib/token-pair.interface.ts",
+        "hash": "9937404430684757287"
       },
       {
         "file": "project/shared-types/src/lib/user.interface.ts",
