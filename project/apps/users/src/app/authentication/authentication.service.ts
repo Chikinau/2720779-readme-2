@@ -19,6 +19,8 @@ import {
   JWT_REFRESH_SECRET_KEY,
   REFRESH_TOKEN_EXPIRES_MS,
 } from './authentication.consts';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { SubscriptionRepository } from '../subscription/subscription.repository';
 
 @Injectable()
 export class AuthenticationService {
@@ -26,6 +28,7 @@ export class AuthenticationService {
     private readonly userRepository: UserRepository,
     private readonly refreshTokenRepository: RefreshTokenRepository,
     private readonly jwtService: JwtService,
+    private readonly subscriptionRepository: SubscriptionRepository,
   ) {}
 
   public async register(dto: CreateUserDto): Promise<User> {
@@ -99,12 +102,16 @@ export class AuthenticationService {
     await this.refreshTokenRepository.deleteByTokenId(payload.jti);
   }
 
-  public async getUser(id: string): Promise<User> {
+  public async getUser(
+    id: string,
+  ): Promise<User & { subscribersCount: number }> {
     const user = await this.userRepository.findById(id);
     if (!user) {
       throw new NotFoundException('Пользователь не найден');
     }
-    return this.toPublic(user);
+    const subscribersCount =
+      await this.subscriptionRepository.countFollowers(id);
+    return { ...this.toPublic(user), subscribersCount };
   }
 
   private async issueTokens(user: UserEntity): Promise<TokenPair> {
@@ -134,5 +141,50 @@ export class AuthenticationService {
   private toPublic(entity: UserEntity): User {
     const { passwordHash, ...rest } = entity.toPOJO();
     return rest;
+  }
+  public async changePassword(
+    userId: string,
+    dto: ChangePasswordDto,
+  ): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    const isValid = await user.comparePassword(dto.currentPassword);
+    if (!isValid) {
+      throw new UnauthorizedException('Текущий пароль неверен');
+    }
+
+    await user.setPassword(dto.newPassword);
+    await this.userRepository.updatePassword(user.id, user.passwordHash);
+  }
+  public async subscribe(
+    followerId: string,
+    followingId: string,
+  ): Promise<void> {
+    if (followerId === followingId) {
+      throw new ConflictException('Нельзя подписаться на самого себя');
+    }
+    const target = await this.userRepository.findById(followingId);
+    if (!target) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+    await this.subscriptionRepository.subscribe(followerId, followingId);
+  }
+
+  public async unsubscribe(
+    followerId: string,
+    followingId: string,
+  ): Promise<void> {
+    await this.subscriptionRepository.unsubscribe(followerId, followingId);
+  }
+
+  public async getSubscribersCount(userId: string): Promise<number> {
+    return this.subscriptionRepository.countFollowers(userId);
+  }
+
+  public async getFollowingIds(userId: string): Promise<string[]> {
+    return this.subscriptionRepository.findFollowingIds(userId);
   }
 }

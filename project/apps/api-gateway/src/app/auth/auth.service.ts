@@ -9,6 +9,7 @@ import { AxiosError } from 'axios';
 import { getGatewayConfig } from '../app.config';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -31,10 +32,29 @@ export class AuthService {
   }
 
   public async getUser(id: string) {
-    return this.forward('get', `/auth/${id}`);
+    const user = await this.forward('get', `/auth/${id}`);
+    const postsCount = await this.fetchPostsCount(id);
+    return { ...user, postsCount };
   }
 
-  private async forward(method: 'get' | 'post', path: string, body?: unknown) {
+  private async fetchPostsCount(authorId: string): Promise<number> {
+    const blogUrl = getGatewayConfig().services.blog;
+    try {
+      const response = await lastValueFrom(
+        this.httpService.get(`${blogUrl}/posts/count/${authorId}`),
+      );
+      return response.data.postsCount ?? 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  private async forward(
+    method: 'get' | 'post' | 'patch' | 'delete',
+    path: string,
+    body?: unknown,
+    userId?: string,
+  ) {
     const baseUrl = getGatewayConfig().services.users;
     try {
       const response = await lastValueFrom(
@@ -42,17 +62,39 @@ export class AuthService {
           method,
           url: `${baseUrl}${path}`,
           data: body,
+          headers: userId ? { 'X-User-Id': userId } : {},
         }),
       );
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError;
       if (axiosError.response) {
-        const status = axiosError.response.status;
-        const data = axiosError.response.data;
-        throw new HttpException(data as Record<string, unknown>, status);
+        throw new HttpException(
+          axiosError.response.data as Record<string, unknown>,
+          axiosError.response.status,
+        );
       }
       throw new InternalServerErrorException('Сервис users недоступен');
     }
+  }
+  public async changePassword(userId: string, dto: ChangePasswordDto) {
+    return this.forward('patch', '/auth/password', dto, userId);
+  }
+  public async subscribe(userId: string, followingId: string) {
+    return this.forward(
+      'post',
+      `/auth/subscribe/${followingId}`,
+      undefined,
+      userId,
+    );
+  }
+
+  public async unsubscribe(userId: string, followingId: string) {
+    return this.forward(
+      'delete',
+      `/auth/subscribe/${followingId}`,
+      undefined,
+      userId,
+    );
   }
 }

@@ -15,6 +15,7 @@ export interface NotifyConfig {
     uri: string;
   };
   triggerEmail: string;
+  blogUrl: string;
 }
 export function getNotifyConfig(): NotifyConfig {
   const rabbitUser = process.env.RABBITMQ_USER ?? 'admin';
@@ -51,5 +52,6 @@ export function getNotifyConfig(): NotifyConfig {
       uri: `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:${mongoPort}/${mongoDb}?authSource=${mongoAuthSource}`,
     },
     triggerEmail: process.env.TRIGGER_EMAIL ?? 'test@example.com',
+    blogUrl: process.env.BLOG_SERVICE_URL ?? 'http://localhost:3001/api',
   };
 }

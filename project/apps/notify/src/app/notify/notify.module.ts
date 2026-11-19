@@ -6,13 +6,14 @@ import { NotifyStateRepository } from './notify-state.repository';
 import { NotifyService } from './notify.service';
 import { NotifyConsumer } from './notify.consumer';
 import { NotifyController } from './notify.controller';
-
+import { HttpModule } from '@nestjs/axios';
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: NotifyStateModel.name, schema: NotifyStateSchema },
     ]),
     RabbitModule,
+    HttpModule,
   ],
   controllers: [NotifyController],
   providers: [NotifyStateRepository, NotifyService, NotifyConsumer],

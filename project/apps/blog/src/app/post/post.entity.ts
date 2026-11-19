@@ -27,6 +27,8 @@ export class PostEntity implements Post {
   public isRepost!: boolean;
   public originalPostId?: string;
   public originalAuthorId?: string;
+  public likesCount?: number;
+  public commentsCount?: number;
 
   constructor(post: Post) {
     this.populate(post);
@@ -52,6 +54,8 @@ export class PostEntity implements Post {
     this.isRepost = data.isRepost;
     this.originalPostId = data.originalPostId;
     this.originalAuthorId = data.originalAuthorId;
+    this.likesCount = data.likesCount;
+    this.commentsCount = data.commentsCount;
   }
 
   public toPOJO(): Post {
@@ -75,6 +79,8 @@ export class PostEntity implements Post {
       isRepost: this.isRepost,
       originalPostId: this.originalPostId,
       originalAuthorId: this.originalAuthorId,
+      likesCount: this.likesCount,
+      commentsCount: this.commentsCount,
     };
   }
 

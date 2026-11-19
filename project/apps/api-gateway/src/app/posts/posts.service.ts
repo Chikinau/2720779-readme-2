@@ -166,4 +166,36 @@ export class PostsService {
       throw new InternalServerErrorException('Сервис недоступен');
     }
   }
+  public async feed(userId: string, query: GetPostsQueryDto) {
+    const usersUrl = getGatewayConfig().services.users;
+
+    let followingIds: string[] = [];
+    try {
+      const response = await lastValueFrom(
+        this.httpService.get(`${usersUrl}/auth/following`, {
+          headers: { 'X-User-Id': userId },
+        }),
+      );
+      followingIds = response.data.followingIds ?? [];
+    } catch {
+      followingIds = [];
+    }
+
+    const authorIds = [...new Set([userId, ...followingIds])];
+
+    const blogUrl = getGatewayConfig().services.blog;
+    const params = new URLSearchParams();
+    authorIds.forEach((id) => params.append('authorIds', id));
+    if (query.sort) params.set('sort', query.sort);
+    if (query.page) params.set('page', String(query.page));
+    if (query.limit) params.set('limit', String(query.limit));
+
+    const response = await this.request<{ items: BlogPost[]; total: number }>(
+      'get',
+      `${blogUrl}/posts?${params.toString()}`,
+    );
+
+    const enriched = await this.enrichPosts(response.items);
+    return { items: enriched, total: response.total };
+  }
 }

@@ -66,6 +66,7 @@ export class PostService {
       authorId: query.authorId,
       type: query.type,
       tag: query.tag,
+      authorIds: query.authorIds,
       status: PostStatus.Published,
     });
 
@@ -227,5 +228,13 @@ export class PostService {
     }
     const lowered = tags.map((t) => t.toLowerCase().trim());
     return [...new Set(lowered)];
+  }
+  public async countByAuthor(authorId: string): Promise<number> {
+    return this.postRepository.countByAuthor(authorId);
+  }
+  
+  public async findPublishedAfter(date: Date) {
+    const items = await this.postRepository.findPublishedAfter(date);
+    return { items: items.map((e) => e.toPOJO()), total: items.length };
   }
 }

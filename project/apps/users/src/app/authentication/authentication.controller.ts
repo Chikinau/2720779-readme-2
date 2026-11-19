@@ -1,5 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Headers,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import {
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -15,6 +25,7 @@ import { UserRdo } from './rdo/user.rdo';
 import { ParseMongoIdPipe } from './parse-mongo-id.pipe';
 import { TokensRdo } from './rdo/tokens.rdo';
 import { LoggedUserRdo } from './rdo/logged-user.rdo';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('authentication')
 @Controller('auth')
@@ -55,6 +66,49 @@ export class AuthenticationController {
   @ApiOkResponse({ description: 'Токен отозван' })
   public async logout(@Body() dto: RefreshTokenDto) {
     await this.authService.logout(dto.refreshToken);
+    return { success: true };
+  }
+  @Patch('password')
+  @ApiOperation({ summary: 'Смена пароля текущего пользователя' })
+  @ApiOkResponse({ description: 'Пароль изменён' })
+  @ApiUnauthorizedResponse({ description: 'Текущий пароль неверен' })
+  public async changePassword(
+    @Body() dto: ChangePasswordDto,
+    @Headers('x-user-id') userId: string,
+  ) {
+    await this.authService.changePassword(userId, dto);
+    return { success: true };
+  }
+  @Get('following')
+  @ApiOperation({
+    summary: 'Список ID пользователей, на которых подписан текущий',
+  })
+  @ApiOkResponse({ description: 'Список ID' })
+  public async following(@Headers('x-user-id') userId: string) {
+    const ids = await this.authService.getFollowingIds(userId);
+    return { followingIds: ids };
+  }
+  @Post('subscribe/:id')
+  @ApiOperation({ summary: 'Подписаться на пользователя' })
+  @ApiOkResponse({ description: 'Подписка оформлена' })
+  @ApiConflictResponse({ description: 'Нельзя подписаться на себя' })
+  @ApiNotFoundResponse({ description: 'Пользователь не найден' })
+  public async subscribe(
+    @Param('id', ParseMongoIdPipe) followingId: string,
+    @Headers('x-user-id') followerId: string,
+  ) {
+    await this.authService.subscribe(followerId, followingId);
+    return { success: true };
+  }
+
+  @Delete('subscribe/:id')
+  @ApiOperation({ summary: 'Отписаться от пользователя' })
+  @ApiOkResponse({ description: 'Подписка отменена' })
+  public async unsubscribe(
+    @Param('id', ParseMongoIdPipe) followingId: string,
+    @Headers('x-user-id') followerId: string,
+  ) {
+    await this.authService.unsubscribe(followerId, followingId);
     return { success: true };
   }
 

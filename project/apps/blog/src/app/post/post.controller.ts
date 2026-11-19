@@ -39,6 +39,19 @@ export class PostController {
   public async findDrafts(@Query() query: GetDraftsQueryDto) {
     return this.postService.findDraftsByAuthor(query.authorId);
   }
+  @Get('new-since/:date')
+  @ApiOkResponse({
+    description: 'Публикации, опубликованные после указанной даты',
+  })
+  public async newSince(@Param('date') date: string) {
+    return this.postService.findPublishedAfter(new Date(date));
+  }
+
+  @Get('count/:authorId')
+  @ApiOkResponse({ description: 'Количество публикаций автора' })
+  public async countByAuthor(@Param('authorId') authorId: string) {
+    return { postsCount: await this.postService.countByAuthor(authorId) };
+  }
 
   @Get(':id')
   @ApiOkResponse({

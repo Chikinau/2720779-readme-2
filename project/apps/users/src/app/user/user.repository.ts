@@ -49,4 +49,7 @@ export class UserRepository {
       createdAt: document.createdAt,
     });
   }
+  public async updatePassword(id: string, passwordHash: string): Promise<void> {
+    await this.userModel.updateOne({ _id: id }, { passwordHash }).exec();
+  }
 }
