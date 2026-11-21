@@ -114,6 +114,16 @@ export class PostRepository {
     });
     return posts.map((p) => this.toEntity(p));
   }
+  public async update(
+    id: string,
+    data: Partial<PostEntity>,
+  ): Promise<PostEntity> {
+    const post = await this.prisma.post.update({
+      where: { id },
+      data,
+    });
+    return this.toEntity(post);
+  }
 
   private toEntity(post: {
     id: string;

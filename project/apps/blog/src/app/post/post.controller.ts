@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  Headers,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PostService } from './post.service';
@@ -67,14 +68,18 @@ export class PostController {
   public async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdatePostDto,
+    @Headers('x-user-id') userId: string,
   ) {
-    return this.postService.update(id, dto);
+    return this.postService.update(id, dto, userId);
   }
 
   @Delete(':id')
   @ApiOkResponse({ description: 'Публикация удалена' })
-  public async delete(@Param('id', ParseUUIDPipe) id: string) {
-    await this.postService.delete(id);
+  public async delete(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Headers('x-user-id') userId: string,
+  ) {
+    await this.postService.delete(id, userId);
   }
 
   @Post(':id/repost')

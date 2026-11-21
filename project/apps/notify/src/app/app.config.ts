@@ -1,3 +1,5 @@
+import { getRequiredEnv } from '@project/shared-types';
+
 export interface NotifyConfig {
   rabbit: {
     uri: string;
@@ -18,22 +20,22 @@ export interface NotifyConfig {
   blogUrl: string;
 }
 export function getNotifyConfig(): NotifyConfig {
-  const rabbitUser = process.env.RABBITMQ_USER ?? 'admin';
-  const rabbitPassword = process.env.RABBITMQ_PASSWORD ?? 'secret';
-  const rabbitHost = process.env.RABBITMQ_HOST ?? 'localhost';
-  const rabbitPort = process.env.RABBITMQ_PORT ?? '5672';
+  const rabbitUser = getRequiredEnv('RABBITMQ_USER');
+  const rabbitPassword = getRequiredEnv('RABBITMQ_PASSWORD');
+  const rabbitHost = getRequiredEnv('RABBITMQ_HOST');
+  const rabbitPort = getRequiredEnv('RABBITMQ_PORT');
   const rabbitQueue = process.env.RABBITMQ_QUEUE ?? 'readme.notify.income';
 
-  const smtpHost = process.env.SMTP_HOST ?? 'localhost';
-  const smtpPort = Number(process.env.SMTP_PORT ?? 8025);
-  const smtpFrom = process.env.SMTP_FROM ?? 'noreply@readme.local';
+  const smtpHost = getRequiredEnv('SMTP_HOST');
+  const smtpPort = Number(getRequiredEnv('SMTP_PORT'));
+  const smtpFrom = getRequiredEnv('SMTP_FROM');
 
-  const mongoUser = process.env.MONGO_USER ?? 'admin';
-  const mongoPassword = process.env.MONGO_PASSWORD ?? 'secret';
-  const mongoHost = process.env.MONGO_HOST ?? 'localhost';
-  const mongoPort = process.env.MONGO_PORT ?? '27020';
-  const mongoDb = process.env.MONGO_DB ?? 'readme-notify';
-  const mongoAuthSource = process.env.MONGO_AUTH_SOURCE ?? 'admin';
+  const mongoUser = getRequiredEnv('MONGO_USER');
+  const mongoPassword = getRequiredEnv('MONGO_PASSWORD');
+  const mongoHost = getRequiredEnv('MONGO_HOST');
+  const mongoPort = getRequiredEnv('MONGO_PORT');
+  const mongoDb = getRequiredEnv('MONGO_DB');
+  const mongoAuthSource = getRequiredEnv('MONGO_AUTH_SOURCE');
 
   return {
     rabbit: {
@@ -51,7 +53,7 @@ export function getNotifyConfig(): NotifyConfig {
     mongo: {
       uri: `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:${mongoPort}/${mongoDb}?authSource=${mongoAuthSource}`,
     },
+    blogUrl: getRequiredEnv('BLOG_SERVICE_URL'),
     triggerEmail: process.env.TRIGGER_EMAIL ?? 'test@example.com',
-    blogUrl: process.env.BLOG_SERVICE_URL ?? 'http://localhost:3001/api',
   };
 }

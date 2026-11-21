@@ -20,6 +20,8 @@ interface BlogPost {
   publishDate: string;
   status: string;
   isRepost: boolean;
+  likesCount?: number;
+  commentsCount?: number;
 }
 
 interface UserProfile {
@@ -63,16 +65,15 @@ export class PostsService {
     return this.request('post', `${blogUrl}/posts`, { ...dto, authorId });
   }
 
-  public async update(id: string, dto: Partial<CreatePostDto>) {
+  public async update(id: string, dto: Partial<CreatePostDto>, userId: string) {
     const blogUrl = getGatewayConfig().services.blog;
-    return this.request('patch', `${blogUrl}/posts/${id}`, dto);
+    return this.request('patch', `${blogUrl}/posts/${id}`, dto, userId);
   }
 
-  public async delete(id: string) {
+  public async delete(id: string, userId: string) {
     const blogUrl = getGatewayConfig().services.blog;
-    return this.request('delete', `${blogUrl}/posts/${id}`);
+    return this.request('delete', `${blogUrl}/posts/${id}`, undefined, userId);
   }
-
   public async repost(id: string, authorId: string) {
     const blogUrl = getGatewayConfig().services.blog;
     return this.request('post', `${blogUrl}/posts/${id}/repost`, { authorId });
@@ -136,6 +137,8 @@ export class PostsService {
         publishDate: post.publishDate,
         status: post.status,
         isRepost: post.isRepost,
+        likesCount: post.likesCount ?? 0, // <-- добавили
+        commentsCount: post.commentsCount ?? 0, // <-- добавили
         author: { id: author.id, name: author.name, email: author.email },
       };
     });
@@ -145,10 +148,16 @@ export class PostsService {
     method: string,
     url: string,
     data?: unknown,
+    userId?: string,
   ): Promise<T> {
     try {
       const response = await lastValueFrom(
-        this.httpService.request({ method, url, data }),
+        this.httpService.request({
+          method,
+          url,
+          data,
+          headers: userId ? { 'X-User-Id': userId } : {},
+        }),
       );
       return response.data as T;
     } catch (error) {

@@ -7,4 +7,4 @@ export * from './lib/subscription.interface';
 export * from './lib/file.interface';
 export * from './lib/token-pair.interface';
 export * from './lib/rabbit-routing.interface';
-
+export * from './lib/env.helper';

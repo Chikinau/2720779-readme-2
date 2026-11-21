@@ -102,21 +102,25 @@ export class PostsController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Обновить публикацию' })
+  @ApiOperation({ summary: 'Обновить публикацию (только свою)' })
   @ApiOkResponse({ description: 'Публикация обновлена' })
   public async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: Partial<CreatePostDto>,
+    @CurrentUser() userId: string,
   ) {
-    return this.postsService.update(id, dto);
+    return this.postsService.update(id, dto, userId);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Удалить публикацию' })
+  @ApiOperation({ summary: 'Удалить публикацию (только свою)' })
   @ApiOkResponse({ description: 'Публикация удалена' })
-  public async delete(@Param('id', ParseUUIDPipe) id: string) {
-    return this.postsService.delete(id);
+  public async delete(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() userId: string,
+  ) {
+    return this.postsService.delete(id, userId);
   }
 }

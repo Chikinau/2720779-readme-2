@@ -54,9 +54,13 @@ export class CommentsService {
 
   public async delete(id: string, userId: string) {
     const blogUrl = getGatewayConfig().services.blog;
-    return this.request('delete', `${blogUrl}/comments/${id}`, { userId });
+    return this.request(
+      'delete',
+      `${blogUrl}/comments/${id}`,
+      undefined,
+      userId,
+    );
   }
-
   private async enrich(comments: BlogComment[]) {
     if (comments.length === 0) {
       return [];
@@ -98,10 +102,16 @@ export class CommentsService {
     method: string,
     url: string,
     data?: unknown,
+    userId?: string,
   ): Promise<T> {
     try {
       const response = await lastValueFrom(
-        this.httpService.request({ method, url, data }),
+        this.httpService.request({
+          method,
+          url,
+          data,
+          headers: userId ? { 'X-User-Id': userId } : {},
+        }),
       );
       return response.data as T;
     } catch (error) {

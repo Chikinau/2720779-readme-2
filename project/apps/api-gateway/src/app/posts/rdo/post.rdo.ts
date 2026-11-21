@@ -1,4 +1,4 @@
-import { ApiProperty} from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class PostAuthorRdo {
   @ApiProperty({ description: 'ID автора' })
@@ -35,4 +35,10 @@ export class PostRdo {
 
   @ApiProperty({ description: 'Автор публикации', type: PostAuthorRdo })
   public author!: PostAuthorRdo;
+
+  @ApiProperty({ description: 'Количество лайков', example: 5 })
+  public likesCount!: number;
+
+  @ApiProperty({ description: 'Количество комментариев', example: 3 })
+  public commentsCount!: number;
 }
