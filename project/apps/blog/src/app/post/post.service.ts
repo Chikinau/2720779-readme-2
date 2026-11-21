@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -66,6 +67,7 @@ export class PostService {
       authorId: query.authorId,
       type: query.type,
       tag: query.tag,
+      authorIds: query.authorIds,
       status: PostStatus.Published,
     });
 
@@ -120,12 +122,20 @@ export class PostService {
     return { items: items.map((e) => e.toPOJO()), total: items.length };
   }
 
-  public async update(id: string, dto: UpdatePostDto): Promise<Post> {
+  public async update(
+    id: string,
+    dto: UpdatePostDto,
+    userId: string,
+  ): Promise<Post> {
     const post = await this.postRepository.findById(id);
     if (!post) {
       throw new NotFoundException(`Публикация ${id} не найдена`);
     }
-
+    if (post.authorId !== userId) {
+      throw new ForbiddenException(
+        'Вы можете редактировать только свои публикации',
+      );
+    }
     if (dto.tags) {
       post.tags = this.normalizeTags(dto.tags);
     }
@@ -143,15 +153,20 @@ export class PostService {
       publishDate: dto.publishDate ?? post.publishDate,
     });
 
-    await this.postRepository.save(post);
+    this.postRepository.update(id, dto);
     return post.toPOJO();
   }
 
-  public async delete(id: string): Promise<void> {
-    const deleted = await this.postRepository.delete(id);
-    if (!deleted) {
+  public async delete(id: string, userId: string): Promise<void> {
+    const post = await this.postRepository.findById(id);
+    if (!post) {
       throw new NotFoundException(`Публикация ${id} не найдена`);
     }
+    if (post.authorId !== userId) {
+      throw new ForbiddenException('Вы можете удалять только свои публикации');
+    }
+
+    await this.postRepository.delete(id);
   }
 
   public async repost(id: string, newAuthorId: string): Promise<Post> {
@@ -227,5 +242,13 @@ export class PostService {
     }
     const lowered = tags.map((t) => t.toLowerCase().trim());
     return [...new Set(lowered)];
+  }
+  public async countByAuthor(authorId: string): Promise<number> {
+    return this.postRepository.countByAuthor(authorId);
+  }
+
+  public async findPublishedAfter(date: Date) {
+    const items = await this.postRepository.findPublishedAfter(date);
+    return { items: items.map((e) => e.toPOJO()), total: items.length };
   }
 }

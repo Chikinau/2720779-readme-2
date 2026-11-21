@@ -3,7 +3,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
-import { getGatewayConfig } from './app/app.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,14 +17,15 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Readme — API Gateway')
-    .setDescription('Точка входа для фронтенда: агрегация, аутентификация, трансформация')
+    .setDescription(
+      'Точка входа для фронтенда: агрегация, аутентификация, трансформация',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();
   SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, config));
 
-  const gatewayConfig = getGatewayConfig();
-  await app.listen(gatewayConfig.port);
+  await app.listen(process.env.PORT ?? 3004);
 }
 
 bootstrap();

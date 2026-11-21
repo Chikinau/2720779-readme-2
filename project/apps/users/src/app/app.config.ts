@@ -1,3 +1,5 @@
+import { getRequiredEnv } from '@project/shared-types';
+
 export interface AppConfig {
   mongo: {
     user: string;
@@ -11,14 +13,12 @@ export interface AppConfig {
 }
 
 export function getAppConfig(): AppConfig {
-  const user = process.env.MONGO_USER ?? 'admin';
-  const password = process.env.MONGO_PASSWORD ?? 'secret';
-  const host = process.env.MONGO_HOST ?? 'localhost';
-  const port = process.env.MONGO_PORT ?? '27017';
-  const db = process.env.MONGO_DB ?? 'readme-users';
-  const authSource = process.env.MONGO_AUTH_SOURCE ?? 'admin';
-
-  const uri = `mongodb://${user}:${password}@${host}:${port}/${db}?authSource=${authSource}`;
+  const user = getRequiredEnv('MONGO_USER');
+  const password = getRequiredEnv('MONGO_PASSWORD');
+  const host = getRequiredEnv('MONGO_HOST');
+  const port = getRequiredEnv('MONGO_PORT');
+  const db = getRequiredEnv('MONGO_DB');
+  const authSource = getRequiredEnv('MONGO_AUTH_SOURCE');
 
   return {
     mongo: {
@@ -28,7 +28,7 @@ export function getAppConfig(): AppConfig {
       port,
       db,
       authSource,
-      uri,
+      uri: `mongodb://${user}:${password}@${host}:${port}/${db}?authSource=${authSource}`,
     },
   };
 }

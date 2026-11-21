@@ -30,6 +30,21 @@ import { JwtAuthGuard } from '../auth/jwt-autg.guard';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @Get('feed')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Контентная лента текущего пользователя' })
+  @ApiOkResponse({
+    description: 'Посты подписок и свои собственные',
+    type: [PostRdo],
+  })
+  public async feed(
+    @CurrentUser() userId: string,
+    @Query() query: GetPostsQueryDto,
+  ) {
+    return this.postsService.feed(userId, query);
+  }
+
   @Get('search')
   @ApiOperation({ summary: 'Поиск публикаций по названию' })
   @ApiOkResponse({ description: 'Результаты поиска', type: [PostRdo] })
@@ -51,6 +66,18 @@ export class PostsController {
   @ApiOkResponse({ description: 'Список публикаций', type: [PostRdo] })
   public async findMany(@Query() query: GetPostsQueryDto) {
     return this.postsService.findMany(query);
+  }
+
+  @Post(':id/repost')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Репост публикации' })
+  @ApiCreatedResponse({ description: 'Репост создан' })
+  public async repost(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() userId: string,
+  ) {
+    return this.postsService.repost(id, userId);
   }
 
   @Get(':id')
@@ -75,33 +102,25 @@ export class PostsController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Обновить публикацию' })
+  @ApiOperation({ summary: 'Обновить публикацию (только свою)' })
   @ApiOkResponse({ description: 'Публикация обновлена' })
   public async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: Partial<CreatePostDto>,
+    @CurrentUser() userId: string,
   ) {
-    return this.postsService.update(id, dto);
+    return this.postsService.update(id, dto, userId);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Удалить публикацию' })
+  @ApiOperation({ summary: 'Удалить публикацию (только свою)' })
   @ApiOkResponse({ description: 'Публикация удалена' })
-  public async delete(@Param('id', ParseUUIDPipe) id: string) {
-    return this.postsService.delete(id);
-  }
-
-  @Post(':id/repost')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Репост публикации' })
-  @ApiCreatedResponse({ description: 'Репост создан' })
-  public async repost(
+  public async delete(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() userId: string,
   ) {
-    return this.postsService.repost(id, userId);
+    return this.postsService.delete(id, userId);
   }
 }

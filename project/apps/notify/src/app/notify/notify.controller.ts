@@ -21,10 +21,7 @@ export class NotifyController {
     await this.amqpConnection.publish(
       config.rabbit.exchange,
       RabbitRouting.NotifySendDigest,
-      {
-        email: dto.email,
-        posts: [{ title: 'Тестовая публикация', authorId: 'seed-user-1' }],
-      },
+      { email: dto.email },
     );
     return { success: true, message: 'Событие отправлено в очередь' };
   }

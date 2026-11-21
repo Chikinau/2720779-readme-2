@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -14,6 +24,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 import { CurrentUser } from './current-user.decorator';
 import { JwtAuthGuard } from './jwt-autg.guard';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -49,6 +60,42 @@ export class AuthController {
     return this.authService.logout(dto.refreshToken);
   }
 
+  @Patch('password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Смена пароля текущего пользователя' })
+  @ApiOkResponse({ description: 'Пароль изменён' })
+  @ApiUnauthorizedResponse({ description: 'Текущий пароль неверен' })
+  public async changePassword(
+    @Body() dto: ChangePasswordDto,
+    @CurrentUser() userId: string,
+  ) {
+    return this.authService.changePassword(userId, dto);
+  }
+  @Post('subscribe/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Подписаться на пользователя' })
+  @ApiOkResponse({ description: 'Подписка оформлена' })
+  public async subscribe(
+    @Param('id') followingId: string,
+    @CurrentUser() userId: string,
+  ) {
+    return this.authService.subscribe(userId, followingId);
+  }
+
+  @Delete('subscribe/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Отписаться от пользователя' })
+  @ApiOkResponse({ description: 'Подписка отменена' })
+  public async unsubscribe(
+    @Param('id') followingId: string,
+    @CurrentUser() userId: string,
+  ) {
+    return this.authService.unsubscribe(userId, followingId);
+  }
+
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -57,5 +104,15 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: 'Токен не передан или невалиден' })
   public async me(@CurrentUser() userId: string) {
     return this.authService.getUser(userId);
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Детальная информация о пользователе (с агрегацией счётчиков)',
+  })
+  @ApiOkResponse({ description: 'Профиль пользователя' })
+  @ApiNotFoundResponse({ description: 'Пользователь не найден' })
+  public async getUser(@Param('id') id: string) {
+    return this.authService.getUser(id);
   }
 }

@@ -35,7 +35,14 @@ export class PostRepository {
   }
 
   public async findById(id: string): Promise<PostEntity | null> {
-    const post = await this.prisma.post.findUnique({ where: { id } });
+    const post = await this.prisma.post.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { likes: true, comments: true },
+        },
+      },
+    });
     return post ? this.toEntity(post) : null;
   }
 
@@ -44,14 +51,25 @@ export class PostRepository {
     type?: string;
     tag?: string;
     status?: PostStatus;
+    authorIds?: string[];
   }): Promise<PostEntity[]> {
     const where: Record<string, unknown> = {};
     if (filter.status) where.status = filter.status;
     if (filter.authorId) where.authorId = filter.authorId;
     if (filter.type) where.type = filter.type;
     if (filter.tag) where.tags = { has: filter.tag };
+    if (filter.authorIds && filter.authorIds.length > 0) {
+      where.authorId = { in: filter.authorIds };
+    }
+    const posts = await this.prisma.post.findMany({
+      where,
+      include: {
+        _count: {
+          select: { likes: true, comments: true },
+        },
+      },
+    });
 
-    const posts = await this.prisma.post.findMany({ where });
     return posts.map((p) => this.toEntity(p));
   }
 
@@ -79,6 +97,33 @@ export class PostRepository {
     });
     return posts.map((p) => this.toEntity(p));
   }
+  public async countByAuthor(authorId: string): Promise<number> {
+    return this.prisma.post.count({ where: { authorId } });
+  }
+
+  public async findPublishedAfter(date: Date): Promise<PostEntity[]> {
+    const posts = await this.prisma.post.findMany({
+      where: {
+        status: PostStatus.Published,
+        publishDate: { gt: date },
+      },
+      orderBy: { publishDate: 'desc' },
+      include: {
+        _count: { select: { likes: true, comments: true } },
+      },
+    });
+    return posts.map((p) => this.toEntity(p));
+  }
+  public async update(
+    id: string,
+    data: Partial<PostEntity>,
+  ): Promise<PostEntity> {
+    const post = await this.prisma.post.update({
+      where: { id },
+      data,
+    });
+    return this.toEntity(post);
+  }
 
   private toEntity(post: {
     id: string;
@@ -100,6 +145,7 @@ export class PostRepository {
     isRepost: boolean;
     originalPostId: string | null;
     originalAuthorId: string | null;
+    _count?: { likes: number; comments: number };
   }): PostEntity {
     return PostEntity.fromObject({
       id: post.id,
@@ -121,6 +167,8 @@ export class PostRepository {
       isRepost: post.isRepost,
       originalPostId: post.originalPostId ?? undefined,
       originalAuthorId: post.originalAuthorId ?? undefined,
+      likesCount: post._count?.likes,
+      commentsCount: post._count?.comments,
     });
   }
 }

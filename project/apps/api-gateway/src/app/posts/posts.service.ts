@@ -20,6 +20,8 @@ interface BlogPost {
   publishDate: string;
   status: string;
   isRepost: boolean;
+  likesCount?: number;
+  commentsCount?: number;
 }
 
 interface UserProfile {
@@ -63,16 +65,15 @@ export class PostsService {
     return this.request('post', `${blogUrl}/posts`, { ...dto, authorId });
   }
 
-  public async update(id: string, dto: Partial<CreatePostDto>) {
+  public async update(id: string, dto: Partial<CreatePostDto>, userId: string) {
     const blogUrl = getGatewayConfig().services.blog;
-    return this.request('patch', `${blogUrl}/posts/${id}`, dto);
+    return this.request('patch', `${blogUrl}/posts/${id}`, dto, userId);
   }
 
-  public async delete(id: string) {
+  public async delete(id: string, userId: string) {
     const blogUrl = getGatewayConfig().services.blog;
-    return this.request('delete', `${blogUrl}/posts/${id}`);
+    return this.request('delete', `${blogUrl}/posts/${id}`, undefined, userId);
   }
-
   public async repost(id: string, authorId: string) {
     const blogUrl = getGatewayConfig().services.blog;
     return this.request('post', `${blogUrl}/posts/${id}/repost`, { authorId });
@@ -136,6 +137,8 @@ export class PostsService {
         publishDate: post.publishDate,
         status: post.status,
         isRepost: post.isRepost,
+        likesCount: post.likesCount ?? 0, // <-- добавили
+        commentsCount: post.commentsCount ?? 0, // <-- добавили
         author: { id: author.id, name: author.name, email: author.email },
       };
     });
@@ -145,10 +148,16 @@ export class PostsService {
     method: string,
     url: string,
     data?: unknown,
+    userId?: string,
   ): Promise<T> {
     try {
       const response = await lastValueFrom(
-        this.httpService.request({ method, url, data }),
+        this.httpService.request({
+          method,
+          url,
+          data,
+          headers: userId ? { 'X-User-Id': userId } : {},
+        }),
       );
       return response.data as T;
     } catch (error) {
@@ -165,5 +174,37 @@ export class PostsService {
       }
       throw new InternalServerErrorException('Сервис недоступен');
     }
+  }
+  public async feed(userId: string, query: GetPostsQueryDto) {
+    const usersUrl = getGatewayConfig().services.users;
+
+    let followingIds: string[] = [];
+    try {
+      const response = await lastValueFrom(
+        this.httpService.get(`${usersUrl}/auth/following`, {
+          headers: { 'X-User-Id': userId },
+        }),
+      );
+      followingIds = response.data.followingIds ?? [];
+    } catch {
+      followingIds = [];
+    }
+
+    const authorIds = [...new Set([userId, ...followingIds])];
+
+    const blogUrl = getGatewayConfig().services.blog;
+    const params = new URLSearchParams();
+    authorIds.forEach((id) => params.append('authorIds', id));
+    if (query.sort) params.set('sort', query.sort);
+    if (query.page) params.set('page', String(query.page));
+    if (query.limit) params.set('limit', String(query.limit));
+
+    const response = await this.request<{ items: BlogPost[]; total: number }>(
+      'get',
+      `${blogUrl}/posts?${params.toString()}`,
+    );
+
+    const enriched = await this.enrichPosts(response.items);
+    return { items: enriched, total: response.total };
   }
 }

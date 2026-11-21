@@ -16,20 +16,22 @@ export enum PostStatus {
 export interface Post extends Entity {
   type: PostType;
   authorId: string;
-  title?: string;          
-  tags: string[];          
-  announcement?: string;    
-  text?: string;            
-  quoteText?: string;       
-  quoteAuthor?: string;    
-  videoUrl?: string;        
-  photoUrl?: string;        
-  linkUrl?: string;         
-  linkDescription?: string; 
-  publishDate: Date;        
-  createDate: Date;         
-  status: PostStatus;     
+  title?: string;
+  tags: string[];
+  announcement?: string;
+  text?: string;
+  quoteText?: string;
+  quoteAuthor?: string;
+  videoUrl?: string;
+  photoUrl?: string;
+  linkUrl?: string;
+  linkDescription?: string;
+  publishDate: Date;
+  createDate: Date;
+  status: PostStatus;
   isRepost: boolean;
-  originalPostId?: string; 
-  originalAuthorId?: string; 
+  originalPostId?: string;
+  originalAuthorId?: string;
+  likesCount?: number;
+  commentsCount?: number;
 }

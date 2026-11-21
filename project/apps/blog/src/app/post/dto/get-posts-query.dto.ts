@@ -1,6 +1,14 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { PostType } from '@project/shared-types';
 
 export enum PostSortField {
@@ -57,4 +65,14 @@ export class GetPostsQueryDto {
   @Min(1)
   @Max(100)
   public limit?: number;
+
+  @ApiPropertyOptional({
+    description: 'Список ID авторов (для ленты)',
+    type: [String],
+    example: ['seed-user-1', 'seed-user-2'],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  public authorIds?: string[];
 }

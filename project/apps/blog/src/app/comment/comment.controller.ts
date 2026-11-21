@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  Headers,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CommentService } from './comment.service';
@@ -41,7 +42,7 @@ export class CommentController {
   @ApiOkResponse({ description: 'Комментарий удалён' })
   public async delete(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body('userId') userId: string,
+    @Headers('x-user-id') userId: string,
   ) {
     await this.commentService.delete(id, userId);
   }

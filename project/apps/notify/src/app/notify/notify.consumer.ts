@@ -6,7 +6,6 @@ import { NotifyService } from './notify.service';
 
 interface SendDigestMessage {
   email: string;
-  posts?: { title: string; authorId: string }[];
 }
 
 @Injectable()
@@ -22,6 +21,6 @@ export class NotifyConsumer {
     },
   })
   public async handleSendDigest(message: SendDigestMessage): Promise<void> {
-    await this.notifyService.sendDigest(message.email, message.posts ?? []);
+    await this.notifyService.sendDigest(message.email);
   }
 }
