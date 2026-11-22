@@ -4,10 +4,6 @@ import { RabbitRouting } from '@project/shared-types';
 import { getNotifyConfig } from '../app.config';
 import { NotifyService } from './notify.service';
 
-interface SendDigestMessage {
-  email: string;
-}
-
 @Injectable()
 export class NotifyConsumer {
   constructor(private readonly notifyService: NotifyService) {}
@@ -20,7 +16,7 @@ export class NotifyConsumer {
       durable: true,
     },
   })
-  public async handleSendDigest(message: SendDigestMessage): Promise<void> {
-    await this.notifyService.sendDigest(message.email);
+  public async handleSendDigest(): Promise<void> {
+    await this.notifyService.sendDigest();
   }
 }

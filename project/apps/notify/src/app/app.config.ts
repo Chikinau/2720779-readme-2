@@ -16,7 +16,7 @@ export interface NotifyConfig {
   mongo: {
     uri: string;
   };
-  triggerEmail: string;
+  usersUrl: string;
   blogUrl: string;
 }
 export function getNotifyConfig(): NotifyConfig {
@@ -53,7 +53,7 @@ export function getNotifyConfig(): NotifyConfig {
     mongo: {
       uri: `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:${mongoPort}/${mongoDb}?authSource=${mongoAuthSource}`,
     },
+    usersUrl: getRequiredEnv('USERS_SERVICE_URL'),
     blogUrl: getRequiredEnv('BLOG_SERVICE_URL'),
-    triggerEmail: process.env.TRIGGER_EMAIL ?? 'test@example.com',
   };
 }

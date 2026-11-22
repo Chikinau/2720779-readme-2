@@ -46,7 +46,7 @@ export class PostService {
       linkDescription: dto.linkDescription,
       publishDate: now,
       createDate: now,
-      status: PostStatus.Published,
+      status: dto.status ?? PostStatus.Published,
       isRepost: false,
     });
 
@@ -75,31 +75,31 @@ export class PostService {
     let sorted: PostEntity[];
 
     if (sort === PostSortField.LikesDesc) {
-      const enriched = await Promise.all(
+      const enrichedPosts = await Promise.all(
         all.map(async (p) => ({
           entity: p,
           count: await this.likeRepository.countByPost(p.id),
         })),
       );
-      enriched.sort(
+      enrichedPosts.sort(
         (a, b) =>
           b.count - a.count ||
           b.entity.publishDate.getTime() - a.entity.publishDate.getTime(),
       );
-      sorted = enriched.map((e) => e.entity);
-    } else if (sort === 'commentsDesc') {
-      const enriched = await Promise.all(
+      sorted = enrichedPosts.map((e) => e.entity);
+    } else if (PostSortField.CommentsDesc) {
+      const enrichedPosts = await Promise.all(
         all.map(async (p) => ({
           entity: p,
           count: await this.commentRepository.countByPost(p.id),
         })),
       );
-      enriched.sort(
+      enrichedPosts.sort(
         (a, b) =>
           b.count - a.count ||
           b.entity.publishDate.getTime() - a.entity.publishDate.getTime(),
       );
-      sorted = enriched.map((e) => e.entity);
+      sorted = enrichedPosts.map((e) => e.entity);
     } else {
       sorted = [...all].sort(
         (a, b) => b.publishDate.getTime() - a.publishDate.getTime(),
@@ -139,7 +139,9 @@ export class PostService {
     if (dto.tags) {
       post.tags = this.normalizeTags(dto.tags);
     }
-
+    if (dto.status) {
+      post.status = dto.status;
+    }
     Object.assign(post, {
       title: dto.title ?? post.title,
       announcement: dto.announcement ?? post.announcement,

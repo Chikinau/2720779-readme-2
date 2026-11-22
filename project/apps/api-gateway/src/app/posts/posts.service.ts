@@ -49,15 +49,15 @@ export class PostsService {
       `${blogUrl}/posts?${params.toString()}`,
     );
 
-    const enriched = await this.enrichPosts(response.items);
-    return { items: enriched, total: response.total };
+    const enrichedPosts = await this.enrichPosts(response.items);
+    return { items: enrichedPosts, total: response.total };
   }
 
   public async findById(id: string) {
     const blogUrl = getGatewayConfig().services.blog;
     const post = await this.request<BlogPost>('get', `${blogUrl}/posts/${id}`);
-    const [enriched] = await this.enrichPosts([post]);
-    return enriched;
+    const [enrichedPosts] = await this.enrichPosts([post]);
+    return enrichedPosts;
   }
 
   public async create(dto: CreatePostDto, authorId: string) {
@@ -85,8 +85,8 @@ export class PostsService {
       'get',
       `${blogUrl}/posts/drafts?authorId=${authorId}`,
     );
-    const enriched = await this.enrichPosts(response.items);
-    return { items: enriched, total: response.total };
+    const enrichedPosts = await this.enrichPosts(response.items);
+    return { items: enrichedPosts, total: response.total };
   }
 
   public async search(title: string) {
@@ -95,8 +95,8 @@ export class PostsService {
       'get',
       `${blogUrl}/posts/search?title=${encodeURIComponent(title)}`,
     );
-    const enriched = await this.enrichPosts(response.items);
-    return { items: enriched, total: response.total };
+    const enrichedPosts = await this.enrichPosts(response.items);
+    return { items: enrichedPosts, total: response.total };
   }
 
   private async enrichPosts(posts: BlogPost[]) {
@@ -204,7 +204,7 @@ export class PostsService {
       `${blogUrl}/posts?${params.toString()}`,
     );
 
-    const enriched = await this.enrichPosts(response.items);
-    return { items: enriched, total: response.total };
+    const enrichedPosts = await this.enrichPosts(response.items);
+    return { items: enrichedPosts, total: response.total };
   }
 }

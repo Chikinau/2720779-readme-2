@@ -23,7 +23,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 import { CurrentUser } from './current-user.decorator';
-import { JwtAuthGuard } from './jwt-autg.guard';
+import { JwtAuthGuard } from './jwt-auth.guard';
 import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('auth')

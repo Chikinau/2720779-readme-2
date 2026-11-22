@@ -1,4 +1,5 @@
 import { getRequiredEnv } from '@project/shared-types';
+import { StringValue } from 'ms';
 
 export interface AppConfig {
   mongo: {
@@ -9,6 +10,13 @@ export interface AppConfig {
     db: string;
     authSource: string;
     uri: string;
+  };
+  jwt: {
+    accessSecret: string;
+    refreshSecret: string;
+    accessExpires: StringValue;
+    refreshExpires: StringValue;
+    refreshTokenExpiresMs: number;
   };
 }
 
@@ -29,6 +37,13 @@ export function getAppConfig(): AppConfig {
       db,
       authSource,
       uri: `mongodb://${user}:${password}@${host}:${port}/${db}?authSource=${authSource}`,
+    },
+    jwt: {
+      accessSecret: getRequiredEnv('JWT_ACCESS_SECRET'),
+      refreshSecret: getRequiredEnv('JWT_REFRESH_SECRET'),
+      accessExpires: '1d',
+      refreshExpires: '7d',
+      refreshTokenExpiresMs: 7 * 24 * 60 * 60 * 1000,
     },
   };
 }

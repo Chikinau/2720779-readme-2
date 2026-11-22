@@ -49,7 +49,13 @@ export class UserRepository {
       createdAt: document.createdAt,
     });
   }
+
   public async updatePassword(id: string, passwordHash: string): Promise<void> {
     await this.userModel.updateOne({ _id: id }, { passwordHash }).exec();
+  }
+
+  public async findAllEmails(): Promise<string[]> {
+    const users = await this.userModel.find().select({ email: 1 }).exec();
+    return users.map((u) => u.email);
   }
 }

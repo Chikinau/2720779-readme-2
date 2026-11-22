@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { PostStatus } from '@project/shared-types';
 import {
   IsArray,
   IsEnum,
@@ -109,4 +110,13 @@ export class CreatePostDto {
   @IsArray()
   @IsString({ each: true })
   public tags?: string[];
+
+  @ApiPropertyOptional({
+    description: 'Статус публикации (по умолчанию published)',
+    enum: PostStatus,
+    default: PostStatus.Published,
+  })
+  @IsOptional()
+  @IsEnum(PostStatus)
+  public status?: PostStatus;
 }
