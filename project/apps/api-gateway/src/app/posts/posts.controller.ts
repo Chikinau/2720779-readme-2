@@ -23,7 +23,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 
 import { CurrentUser } from '../auth/current-user.decorator';
 import { PostRdo } from './rdo/post.rdo';
-import { JwtAuthGuard } from '../auth/jwt-autg.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('posts')
 @Controller('posts')

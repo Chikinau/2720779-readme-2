@@ -7,9 +7,10 @@ import {
   IsString,
   IsUrl,
   Length,
+  Matches,
   MaxLength,
 } from 'class-validator';
-import { PostType } from '@project/shared-types';
+import { PostStatus, PostType } from '@project/shared-types';
 import { TAG_MAX_LENGTH, TAG_MIN_LENGTH, TAGS_MAX_COUNT } from '../post.consts';
 
 export class CreatePostDto {
@@ -76,12 +77,15 @@ export class CreatePostDto {
   @Length(3, 50)
   public quoteAuthor?: string;
 
-  @ApiPropertyOptional({
-    description: 'Ссылка на YouTube',
-    example: 'https://youtube.com/watch?v=...',
-  })
+  @ApiPropertyOptional({ description: 'Ссылка на YouTube (для video)' })
   @IsOptional()
   @IsString()
+  @Matches(
+    /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+/,
+    {
+      message: 'videoUrl должен быть ссылкой на YouTube',
+    },
+  )
   public videoUrl?: string;
 
   @ApiPropertyOptional({
@@ -116,4 +120,13 @@ export class CreatePostDto {
   @Length(TAG_MIN_LENGTH, TAG_MAX_LENGTH, { each: true })
   @ArrayMaxSize(TAGS_MAX_COUNT)
   public tags?: string[];
+
+  @ApiPropertyOptional({
+    description: 'Статус публикации (по умолчанию published)',
+    enum: PostStatus,
+    default: PostStatus.Published,
+  })
+  @IsOptional()
+  @IsEnum(PostStatus)
+  public status?: PostStatus;
 }

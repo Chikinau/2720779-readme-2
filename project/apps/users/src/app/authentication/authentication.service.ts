@@ -12,18 +12,13 @@ import { UserRepository } from '../user/user.repository';
 import { RefreshTokenRepository } from '../refresh-token/refresh-token.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import {
-  JWT_ACCESS_EXPIRES,
-  JWT_ACCESS_SECRET_KEY,
-  JWT_REFRESH_EXPIRES,
-  JWT_REFRESH_SECRET_KEY,
-  REFRESH_TOKEN_EXPIRES_MS,
-} from './authentication.consts';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { SubscriptionRepository } from '../subscription/subscription.repository';
+import { getAppConfig } from '../app.config';
 
 @Injectable()
 export class AuthenticationService {
+  private readonly jwtConfig = getAppConfig().jwt;
   constructor(
     private readonly userRepository: UserRepository,
     private readonly refreshTokenRepository: RefreshTokenRepository,
@@ -70,7 +65,7 @@ export class AuthenticationService {
     let payload: { sub: string; jti: string };
     try {
       payload = await this.jwtService.verifyAsync(refreshToken, {
-        secret: process.env[JWT_REFRESH_SECRET_KEY],
+        secret: this.jwtConfig.refreshSecret,
       });
     } catch {
       throw new UnauthorizedException('Невалидный refresh token');
@@ -94,7 +89,7 @@ export class AuthenticationService {
     let payload: { jti: string };
     try {
       payload = await this.jwtService.verifyAsync(refreshToken, {
-        secret: process.env[JWT_REFRESH_SECRET_KEY],
+        secret: this.jwtConfig.refreshSecret,
       });
     } catch {
       return;
@@ -119,21 +114,21 @@ export class AuthenticationService {
     const accessToken = await this.jwtService.signAsync(
       { sub: user.id, email: user.email, role: user.role },
       {
-        secret: process.env[JWT_ACCESS_SECRET_KEY],
-        expiresIn: JWT_ACCESS_EXPIRES,
+        secret: this.jwtConfig.accessSecret,
+        expiresIn: this.jwtConfig.accessExpires,
       },
     );
     const refreshToken = await this.jwtService.signAsync(
       { sub: user.id, jti: tokenId },
       {
-        secret: process.env[JWT_REFRESH_SECRET_KEY],
-        expiresIn: JWT_REFRESH_EXPIRES,
+        secret: this.jwtConfig.refreshSecret,
+        expiresIn: this.jwtConfig.refreshExpires,
       },
     );
     await this.refreshTokenRepository.create({
       tokenId,
       userId: user.id,
-      expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRES_MS),
+      expiresAt: new Date(Date.now() + this.jwtConfig.refreshTokenExpiresMs),
     });
     return { accessToken, refreshToken };
   }
@@ -186,5 +181,9 @@ export class AuthenticationService {
 
   public async getFollowingIds(userId: string): Promise<string[]> {
     return this.subscriptionRepository.findFollowingIds(userId);
+  }
+
+  public async getAllEmails(): Promise<string[]> {
+    return this.userRepository.findAllEmails();
   }
 }

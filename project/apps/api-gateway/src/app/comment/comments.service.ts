@@ -48,8 +48,8 @@ export class CommentsService {
       total: number;
     }>('get', `${blogUrl}/posts/${postId}/comments?${params.toString()}`);
 
-    const enriched = await this.enrich(response.items);
-    return { items: enriched, total: response.total };
+    const enrichedComments = await this.enrich(response.items);
+    return { items: enrichedComments, total: response.total };
   }
 
   public async delete(id: string, userId: string) {

@@ -20,26 +20,45 @@ export class NotifyService {
     private readonly httpService: HttpService,
   ) {}
 
-  public async sendDigest(recipientEmail: string): Promise<void> {
+  public async sendDigest(): Promise<void> {
     const lastSentAt = await this.stateRepository.getLastSentAt('digest');
     const since = lastSentAt ?? new Date(0);
-
     const posts = await this.fetchNewPosts(since);
 
-    await this.mailerService.sendMail({
-      to: recipientEmail,
-      subject: 'Новые публикации в Readme',
-      template: 'notify-new-posts',
-      context: {
-        user: recipientEmail.split('@')[0],
-        posts: posts.map((p) => ({
-          title: p.title ?? 'Без названия',
-          authorId: p.authorId,
-        })),
-      },
-    });
+    const emails = await this.fetchAllEmails();
+
+    for (const email of emails) {
+      try {
+        await this.mailerService.sendMail({
+          to: email,
+          subject: 'Новые публикации в Readme',
+          template: 'notify-new-posts',
+          context: {
+            user: email.split('@')[0],
+            posts: posts.map((p) => ({
+              title: p.title ?? 'Без названия',
+              authorId: p.authorId,
+            })),
+          },
+        });
+      } catch (error) {
+        console.error(`Failed to send email to ${email}:`, error);
+      }
+    }
 
     await this.stateRepository.updateLastSentAt('digest', new Date());
+  }
+
+  private async fetchAllEmails(): Promise<string[]> {
+    const usersUrl = getNotifyConfig().usersUrl;
+    try {
+      const response = await lastValueFrom(
+        this.httpService.get(`${usersUrl}/auth/all-emails`),
+      );
+      return response.data.emails ?? [];
+    } catch {
+      return [];
+    }
   }
 
   private async fetchNewPosts(since: Date): Promise<BlogPost[]> {

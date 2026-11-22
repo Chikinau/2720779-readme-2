@@ -16,7 +16,7 @@ import {
 import { LikesService } from './likes.service';
 
 import { CurrentUser } from '../auth/current-user.decorator';
-import { JwtAuthGuard } from '../auth/jwt-autg.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('likes')
 @Controller('posts')

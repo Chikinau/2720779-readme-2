@@ -21,7 +21,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { GetCommentsQueryDto } from './dto/get-comments-query.dto';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { CommentRdo } from './rdo/comment.rdo';
-import { JwtAuthGuard } from '../auth/jwt-autg.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('comments')
 @Controller()

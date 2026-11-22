@@ -68,6 +68,7 @@ export class AuthenticationController {
     await this.authService.logout(dto.refreshToken);
     return { success: true };
   }
+
   @Patch('password')
   @ApiOperation({ summary: 'Смена пароля текущего пользователя' })
   @ApiOkResponse({ description: 'Пароль изменён' })
@@ -79,6 +80,7 @@ export class AuthenticationController {
     await this.authService.changePassword(userId, dto);
     return { success: true };
   }
+
   @Get('following')
   @ApiOperation({
     summary: 'Список ID пользователей, на которых подписан текущий',
@@ -88,6 +90,13 @@ export class AuthenticationController {
     const ids = await this.authService.getFollowingIds(userId);
     return { followingIds: ids };
   }
+
+  @Get('all-emails')
+  @ApiOperation({ summary: 'Список email всех пользователей (внутренний)' })
+  public async allEmails() {
+    return { emails: await this.authService.getAllEmails() };
+  }
+
   @Post('subscribe/:id')
   @ApiOperation({ summary: 'Подписаться на пользователя' })
   @ApiOkResponse({ description: 'Подписка оформлена' })
